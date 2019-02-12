@@ -17,11 +17,11 @@ class DashboardSalesReport {
 			}
 			$month_start = mktime(0, 0, 0, $month, 1, $year);
 			$month_end = mktime(23, 59, 59, $month, date('t', $month_start) , $year);
-			$month_sales = $db->q('SELECT SUM(`subtotal`) FROM `invoices` WHERE `status` = \'Paid\' AND `credit` = \'0\' AND `datepaid` > ? AND `datepaid` < ?', $month_start, $month_end);
+			$month_sales = $db->q('SELECT SUM(`subtotal`) FROM `invoices` WHERE `status` = \'Paid\' AND `credit` = \'0\' AND `datepaid` > ? AND `datepaid` < ?', $month_start-1, $month_end+1);
 			$month_sales = abs(floor($month_sales[0]['SUM(`subtotal`)']));
-			$month_expenditures = $db->q('SELECT SUM(`amount`) FROM `transactions` WHERE `amount` < \'0\' AND `date` > ? AND `date` < ?', $month_start, $month_end);
+			$month_expenditures = $db->q('SELECT SUM(`amount`) FROM `transactions` WHERE `amount` <= \'0\' AND `date` > ? AND `date` < ?', $month_start-1, $month_end+1);
 			$month_expenditures = abs(floor($month_expenditures[0]['SUM(`amount`)']));
-			$month_wages = $db->q('SELECT SUM(`amount`) FROM `transactions` WHERE (LOWER(`description`) LIKE \'% wage\' OR LOWER(`description`) LIKE \'wage %\') AND `amount` < \'0\' AND `date` > ? AND `date` < ?', $month_start, $month_end);
+			$month_wages = $db->q('SELECT SUM(`amount`) FROM `transactions` WHERE (LOWER(`description`) LIKE \'% wage\' OR LOWER(`description`) LIKE \'wage %\') AND `amount` < \'0\' AND `date` > ? AND `date` < ?', $month_start-1, $month_end+1);
 			$month_wages = abs(floor($month_wages[0]['SUM(`amount`)']));
 			$reports[$i]['date'] = date('Y/m/d', $month_start);
 			$reports[$i]['sales'] = $month_sales;
