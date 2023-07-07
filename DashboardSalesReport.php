@@ -9,6 +9,7 @@ class DashboardSalesReport {
 		$year = date('Y');
 		$month = date('n') + 1;
 		$reports = array();
+		$wages_enabled = false;
 		for ($i = 1;$i >= - 10;$i--) {
 			$month--;
 			if ($month <= 0) {
@@ -27,7 +28,8 @@ class DashboardSalesReport {
 			$reports[$i]['sales'] = $month_sales;
 			$reports[$i]['expenses'] = $month_expenditures-$month_wages;
 			if ($month_wages > 0) {
-				$reports[$i]['wages'] = $month_wages;	
+				$reports[$i]['wages'] = $month_wages;
+				$wages_enabled = true;
 			}
 			$reports[$i]['profit'] = $month_sales - $month_expenditures;
 		}
@@ -39,7 +41,7 @@ g = new Dygraph(
 		$out = '';
 		foreach ($reports as $r) {
 			// 2009/07/12 12:34
-			$out = '"' . $r['date'] . ',' . $r['profit'] . ',' . $r['sales'] . ',' . $r['expenses'] . ',' . $r['wages'] . '\n"+' . $out;
+			$out = '"' . $r['date'] . ',' . $r['profit'] . ',' . $r['sales'] . ',' . $r['expenses'] . ($wages_enabled?','.$r['wages']:'') . '\n"+' . $out;
 		}
 		$html.= substr($out, 0, -1);
 		$html.= ',
